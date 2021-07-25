@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import classes from './AuthForm.module.css';
+import LoadingSpinner from '../Layout/LoadingSpinner';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,8 +9,8 @@ const AuthForm = () => {
   const [enteredPassword, setEnteredPassword] = useState('');
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  console.log(process.env.REACT_APP_API_KEY);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccesful, setIsSuccesful] = useState(false);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -25,6 +26,7 @@ const AuthForm = () => {
   async function sendRequest(user) {
     try {
       setError(false);
+      setIsLoading(true);
       const res = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`,
         {
@@ -34,11 +36,18 @@ const AuthForm = () => {
         }
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error.message);
+      let errorMessage = 'Authentication failed';
+      if (data.error) {
+        errorMessage = data.error.message;
+      }
+      if (!res.ok) throw new Error(errorMessage);
+
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       setError(true);
       setErrorMessage(err.message);
+      setIsLoading(false);
     }
   }
 
@@ -78,7 +87,10 @@ const AuthForm = () => {
           />
         </div>
         <div className={classes.actions}>
-          <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          {isLoading && <LoadingSpinner />}
+          {!isLoading && (
+            <button>{isLogin ? 'Login' : 'Create Account'}</button>
+          )}
           <button
             type='button'
             className={classes.toggle}

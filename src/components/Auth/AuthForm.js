@@ -8,9 +8,8 @@ const AuthForm = () => {
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccesful, setIsSuccesful] = useState(false);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -23,18 +22,15 @@ const AuthForm = () => {
     setEnteredPassword(e.target.value);
   }
 
-  async function sendRequest(user) {
+  async function sendRequest(user, url) {
     try {
       setError(false);
       setIsLoading(true);
-      const res = await fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`,
-        {
-          method: 'POST',
-          body: JSON.stringify(user),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(user),
+        headers: { 'Content-Type': 'application/json' },
+      });
       const data = await res.json();
       let errorMessage = 'Authentication failed';
       if (data.error) {
@@ -59,7 +55,16 @@ const AuthForm = () => {
       returnSecureToken: true,
     };
     if (!isLogin) {
-      sendRequest(user);
+      sendRequest(
+        user,
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`
+      );
+    }
+    if (isLogin) {
+      sendRequest(
+        user,
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`
+      );
     }
   }
 

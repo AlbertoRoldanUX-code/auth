@@ -1,9 +1,11 @@
 import { useState } from 'react';
-
+import AuthContext from '../../store/auth-context';
+import { useContext } from 'react';
 import classes from './AuthForm.module.css';
 import LoadingSpinner from '../Layout/LoadingSpinner';
 
 const AuthForm = () => {
+  const ctx = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
@@ -32,6 +34,7 @@ const AuthForm = () => {
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
+      console.log(data);
       let errorMessage = 'Authentication failed';
       if (data.error) {
         errorMessage = data.error.message;
@@ -39,6 +42,8 @@ const AuthForm = () => {
       if (!res.ok) throw new Error(errorMessage);
 
       setIsLoading(false);
+      console.log(data);
+      ctx.login(data.idToken);
     } catch (err) {
       console.error(err);
       setError(true);

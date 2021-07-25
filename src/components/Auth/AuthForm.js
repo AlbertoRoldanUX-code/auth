@@ -9,6 +9,8 @@ const AuthForm = () => {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  console.log(process.env.REACT_APP_API_KEY);
+
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
@@ -24,7 +26,7 @@ const AuthForm = () => {
     try {
       setError(false);
       const res = await fetch(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAP7f6DeUmrphwWGbiKyjhCRZc4FHlucKY',
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`,
         {
           method: 'POST',
           body: JSON.stringify(user),

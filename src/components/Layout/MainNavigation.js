@@ -9,6 +9,7 @@ const MainNavigation = () => {
   function logoutHandler() {
     ctx.logout();
   }
+
   return (
     <header className={classes.header}>
       <Link to='/'>

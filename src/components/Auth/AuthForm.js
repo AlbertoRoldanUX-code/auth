@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import AuthContext from '../../store/auth-context';
-import { useContext } from 'react';
 import classes from './AuthForm.module.css';
 import LoadingSpinner from '../Layout/LoadingSpinner';
+import useSendRequest from '../../hooks/use-send-request';
 
 const AuthForm = () => {
   const ctx = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -24,32 +24,37 @@ const AuthForm = () => {
     setEnteredPassword(e.target.value);
   }
 
-  async function sendRequest(user, url) {
-    try {
-      setError(false);
-      setIsLoading(true);
-      const res = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(user),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await res.json();
-      console.log(data);
-      let errorMessage = 'Authentication failed';
-      if (data.error) {
-        errorMessage = data.error.message;
-      }
-      if (!res.ok) throw new Error(errorMessage);
+  // async function sendRequest(user, url) {
+  //   try {
+  //     setError(false);
+  //     setIsLoading(true);
+  //     const res = await fetch(url, {
+  //       method: 'POST',
+  //       body: JSON.stringify(user),
+  //       headers: { 'Content-Type': 'application/json' },
+  //     });
+  //     const data = await res.json();
+  //     let errorMessage = 'Authentication failed';
+  //     if (data.error) {
+  //       errorMessage = data.error.message;
+  //     }
+  //     if (!res.ok) throw new Error(errorMessage);
 
-      setIsLoading(false);
-      console.log(data);
-      ctx.login(data.idToken);
-    } catch (err) {
-      console.error(err);
-      setError(true);
-      setErrorMessage(err.message);
-      setIsLoading(false);
-    }
+  //     setIsLoading(false);
+  //     console.log(data);
+  //     ctx.login(data.idToken);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError(true);
+  //     setErrorMessage(err.message);
+  //     setIsLoading(false);
+  //   }
+  // }
+
+  const { isLoading, error, errorMessage, sendRequest } = useSendRequest();
+
+  function LogIn(data) {
+    ctx.login(data.idToken);
   }
 
   function submitHandler(e) {
@@ -59,16 +64,29 @@ const AuthForm = () => {
       password: enteredPassword,
       returnSecureToken: true,
     };
+
+    //Sign Up
     if (!isLogin) {
       sendRequest(
-        user,
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`
+        {
+          url: `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_API_KEY}`,
+          method: 'POST',
+          body: user,
+          headers: { 'Content-Type': 'application/json' },
+        },
+        LogIn
       );
     }
+    //log In
     if (isLogin) {
       sendRequest(
-        user,
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`
+        {
+          url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`,
+          method: 'POST',
+          body: user,
+          headers: { 'Content-Type': 'application/json' },
+        },
+        LogIn
       );
     }
   }

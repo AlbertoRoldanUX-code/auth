@@ -1,11 +1,13 @@
-import { Switch, Route } from 'react-router-dom';
-
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { useContext } from 'react';
 import Layout from './components/Layout/Layout';
 import UserProfile from './components/Profile/UserProfile';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
+import AuthContext from './store/auth-context';
 
 function App() {
+  const ctx = useContext(AuthContext);
   return (
     <Layout>
       <Switch>
@@ -16,7 +18,12 @@ function App() {
           <AuthPage />
         </Route>
         <Route path='/profile'>
-          <UserProfile />
+          {ctx.isLoggedIn && <UserProfile />}
+          {!ctx.isLoggedIn && (
+            <Redirect to='/'>
+              <HomePage />
+            </Redirect>
+          )}
         </Route>
       </Switch>
     </Layout>
@@ -24,3 +31,5 @@ function App() {
 }
 
 export default App;
+
+// Implement change of password.

@@ -3,15 +3,14 @@ import AuthContext from '../../store/auth-context';
 import classes from './AuthForm.module.css';
 import LoadingSpinner from '../Layout/LoadingSpinner';
 import useSendRequest from '../../hooks/use-send-request';
+import { useHistory } from 'react-router-dom';
 
 const AuthForm = () => {
   const ctx = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
-  // const [error, setError] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -24,37 +23,11 @@ const AuthForm = () => {
     setEnteredPassword(e.target.value);
   }
 
-  // async function sendRequest(user, url) {
-  //   try {
-  //     setError(false);
-  //     setIsLoading(true);
-  //     const res = await fetch(url, {
-  //       method: 'POST',
-  //       body: JSON.stringify(user),
-  //       headers: { 'Content-Type': 'application/json' },
-  //     });
-  //     const data = await res.json();
-  //     let errorMessage = 'Authentication failed';
-  //     if (data.error) {
-  //       errorMessage = data.error.message;
-  //     }
-  //     if (!res.ok) throw new Error(errorMessage);
-
-  //     setIsLoading(false);
-  //     console.log(data);
-  //     ctx.login(data.idToken);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError(true);
-  //     setErrorMessage(err.message);
-  //     setIsLoading(false);
-  //   }
-  // }
-
   const { isLoading, error, errorMessage, sendRequest } = useSendRequest();
 
   function LogIn(data) {
     ctx.login(data.idToken);
+    history.replace('/');
   }
 
   function submitHandler(e) {

@@ -19,11 +19,7 @@ function App() {
         </Route>
         <Route path='/profile'>
           {ctx.isLoggedIn && <UserProfile />}
-          {!ctx.isLoggedIn && (
-            <Redirect to='/'>
-              <HomePage />
-            </Redirect>
-          )}
+          {!ctx.isLoggedIn && <Redirect to='/' exact />}
         </Route>
       </Switch>
     </Layout>
@@ -32,4 +28,4 @@ function App() {
 
 export default App;
 
-// Implement change of password.
+// Redirect user to HomeScreen after logging in.

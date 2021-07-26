@@ -19,8 +19,7 @@ const ProfileForm = () => {
   function sendSuccessMessage() {
     setIsChanged(true);
     setTimeout(() => {
-      history.push('/');
-      setIsChanged(false);
+      history.replace('/');
     }, 3000);
   }
 

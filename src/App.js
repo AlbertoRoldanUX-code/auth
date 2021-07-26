@@ -8,6 +8,7 @@ import AuthContext from './store/auth-context';
 
 function App() {
   const ctx = useContext(AuthContext);
+
   return (
     <Layout>
       <Switch>
@@ -15,11 +16,16 @@ function App() {
           <HomePage />
         </Route>
         <Route path='/auth'>
-          <AuthPage />
+          {!ctx.isLoggedIn && <AuthPage />}
+          {ctx.isLoggedIn && <Redirect to='/' />}
         </Route>
         <Route path='/profile'>
           {ctx.isLoggedIn && <UserProfile />}
-          {!ctx.isLoggedIn && <Redirect to='/' exact />}
+          {!ctx.isLoggedIn && <Redirect to='/' />}
+        </Route>
+
+        <Route path='*'>
+          <Redirect to='/' />
         </Route>
       </Switch>
     </Layout>
@@ -28,4 +34,5 @@ function App() {
 
 export default App;
 
-// Redirect user to HomeScreen after logging in.
+// Use LocalStorage to persist user authentication status.
+// Remove the token from LocalStorage after the token expired, setting a timer.

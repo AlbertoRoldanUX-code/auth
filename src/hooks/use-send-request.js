@@ -15,7 +15,6 @@ function useSendRequest() {
         headers: requestConfig.headers,
       });
       const data = await res.json();
-      console.log(data);
       let errorMessage = 'Authentication failed';
       if (data.error) {
         errorMessage = data.error.message;

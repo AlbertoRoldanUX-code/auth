@@ -34,5 +34,6 @@ function App() {
 
 export default App;
 
-// Use LocalStorage to persist user authentication status.
-// Remove the token from LocalStorage after the token expired, setting a timer.
+// Add Auto-logout
+// Store expiration time in local storage.
+// Clear timer if user logs out manually.

@@ -1,6 +1,8 @@
 import AuthContext from './auth-context';
 import { useState } from 'react';
 
+let logoutTimer;
+
 function calculateRemainingTime(expirationTime) {
   const currentTime = new Date().getTime();
   const adjExpirationTime = new Date(expirationTime).getTime();
@@ -21,7 +23,7 @@ function AuthProvider(props) {
 
     const remainingTime = calculateRemainingTime(expirationTime);
 
-    setTimeout(() => {
+    logoutTimer = setTimeout(() => {
       logOutHandler();
     }, remainingTime);
   }
@@ -29,6 +31,10 @@ function AuthProvider(props) {
   function logOutHandler() {
     setToken(null);
     localStorage.removeItem('token ');
+
+    if (logoutTimer) {
+      clearTimeout(logoutTimer);
+    }
   }
 
   const contextValue = {

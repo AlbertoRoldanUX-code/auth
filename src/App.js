@@ -34,6 +34,5 @@ function App() {
 
 export default App;
 
-// Add Auto-logout
-// Store expiration time in local storage.
 // Clear timer if user logs out manually.
+// Store expiration time in local storage.
